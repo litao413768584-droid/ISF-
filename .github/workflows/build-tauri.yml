@@ -24,10 +24,7 @@ jobs:
 
       - name: Create icons folder and icon.ico
         run: |
-          # 创建 icons 文件夹
           New-Item -ItemType Directory -Force -Path "src-tauri/icons"
-          
-          # 生成图标
           Add-Type -AssemblyName System.Drawing
           $bmp = New-Object System.Drawing.Bitmap(64, 64)
           $g = [System.Drawing.Graphics]::FromImage($bmp)
@@ -37,6 +34,35 @@ jobs:
           $fs = [System.IO.File]::Create("src-tauri/icons/icon.ico")
           $icon.Save($fs)
           $fs.Close()
+        shell: powershell
+
+      - name: Create tauri.conf.json
+        run: |
+          $json = @"
+          {
+            "identifier": "com.seafarer.workrest",
+            "productName": "seafarer-work-rest-log",
+            "version": "1.0.0",
+            "build": {
+              "frontendDist": "../dist",
+              "devUrl": "http://localhost:1420"
+            },
+            "app": {
+              "windows": [
+                {
+                  "title": "海员休息工作时间记录",
+                  "width": 1200,
+                  "height": 800,
+                  "resizable": true
+                }
+              ]
+            },
+            "bundle": {
+              "icon": ["icons/icon.ico"]
+            }
+          }
+          "@
+          [System.IO.File]::WriteAllText("src-tauri/tauri.conf.json", $json, [System.Text.UTF8Encoding]::new($false))
         shell: powershell
 
       - name: Install dependencies
