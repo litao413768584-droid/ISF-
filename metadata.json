@@ -1,0 +1,8 @@
+{
+  "name": "Remix ISF Watchkeeper - Maritime Rest Hours Compliance",
+  "description": "Offline-capable STCW 2010 \u0026 MLC 2006 seafarer work and rest hours tracking, non-conformity compliance validation, and monthly timesheet logging software.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
