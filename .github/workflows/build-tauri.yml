@@ -1,58 +1,59 @@
-name: Build Portable Windows EXE (Tauri)
+﻿name: Build Windows EXE
 
 on:
   push:
-    branches:
-      - main
-      - master
-    tags:
-      - 'v*'
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build-tauri-windows:
-    permissions:
-      contents: write
+  build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: '18'
 
-      - name: Install Rust toolchain
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          targets: x86_64-pc-windows-msvc
+
+      - name: Create icons folder and icon.ico
+        run: |
+          # 创建 icons 文件夹
+          New-Item -ItemType Directory -Force -Path "src-tauri/icons"
+          
+          # 生成图标
+          Add-Type -AssemblyName System.Drawing
+          $bmp = New-Object System.Drawing.Bitmap(64, 64)
+          $g = [System.Drawing.Graphics]::FromImage($bmp)
+          $g.Clear([System.Drawing.Color]::RoyalBlue)
+          $g.DrawString("ISF", (New-Object System.Drawing.Font("Arial",20)), [System.Drawing.Brushes]::White, 12, 20)
+          $icon = [System.Drawing.Icon]::FromHandle($bmp.GetHicon())
+          $fs = [System.IO.File]::Create("src-tauri/icons/icon.ico")
+          $icon.Save($fs)
+          $fs.Close()
+        shell: powershell
 
       - name: Install dependencies
-        run: npm ci || npm install
+        run: |
+          Remove-Item -Force -Recurse -ErrorAction SilentlyContinue .\node_modules
+          Remove-Item -Force -Recurse -ErrorAction SilentlyContinue .\package-lock.json
+          npm install
 
-      - name: Build Frontend & Tauri Standalone App
-        uses: tauri-apps/tauri-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: v__VERSION__
-          releaseName: 'STCW 船员工时休息记录系统 v__VERSION__'
-          releaseBody: 'STCW 2010 / MLC 2006 船员工时休息记录系统 - 免安装绿色独立可执行文件 (.exe)'
-          releaseDraft: false
-          prerelease: false
-          args: --target x86_64-pc-windows-msvc
+      - name: Build frontend
+        run: npm run build
 
-      - name: Upload Windows Executable Artifact
+      - name: Build Tauri app
+        run: npm run tauri build
+
+      - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
-          name: SeafarerWorkRestLog-Windows-Exe
-          path: |
-            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
-            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/portable/*.exe
-            src-tauri/target/x86_64-pc-windows-msvc/release/*.exe
+          name: isf-exe
+          path: src-tauri/target/release/*.exe
+          if-no-files-found: error
