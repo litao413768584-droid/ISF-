@@ -38,6 +38,10 @@ jobs:
 
       - name: Create tauri.conf.json
         run: |
+          # 删除可能存在的空文件
+          if (Test-Path "src-tauri/tauri.conf.json") {
+            Remove-Item "src-tauri/tauri.conf.json" -Force
+          }
           $json = @"
           {
             "identifier": "com.seafarer.workrest",
@@ -51,8 +55,8 @@ jobs:
               "windows": [
                 {
                   "title": "海员休息工作时间记录",
-                  "width": 1200,
-                  "height": 800,
+                  "width": 1400,
+                  "height": 900,
                   "resizable": true
                 }
               ]
@@ -62,6 +66,7 @@ jobs:
             }
           }
           "@
+          # 使用 UTF8 编码，无 BOM
           [System.IO.File]::WriteAllText("src-tauri/tauri.conf.json", $json, [System.Text.UTF8Encoding]::new($false))
         shell: powershell
 
