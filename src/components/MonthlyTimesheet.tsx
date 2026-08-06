@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { CrewMember, WorkLogDay, VesselInfo, NonConformity } from '../types';
 import { getMonthDates, calculateDayWorkHours, calculateDayRestHours } from '../utils/complianceEngine';
 import { getCrewContractDayStatus } from '../utils/handoverEngine';
@@ -312,5 +312,3 @@ export const MonthlyTimesheet: React.FC<MonthlyTimesheetProps> = ({
     </div>
   );
 };
-
-export default MonthlyTimesheet;

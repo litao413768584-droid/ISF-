@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { NonConformity } from '../types';
 import { AlertTriangle, ShieldAlert, FileText, Check, Trash2 } from 'lucide-react';
 
@@ -115,4 +115,3 @@ export const NCDetailsModal: React.FC<NCDetailsModalProps> = ({
     </div>
   );
 };
-export default NCDetailsModal;

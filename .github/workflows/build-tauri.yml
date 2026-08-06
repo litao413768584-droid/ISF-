@@ -1,90 +1,58 @@
-﻿name: Build Windows EXE
+name: Build Portable Windows EXE (Tauri)
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
-  build:
+  build-tauri-windows:
+    permissions:
+      contents: write
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
+          cache: npm
 
-      - name: Setup Rust
+      - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
         with:
-          targets: x86_64-pc-windows-msvc
-
-      - name: Create icons folder and icon.ico
-        run: |
-          New-Item -ItemType Directory -Force -Path "src-tauri/icons"
-          Add-Type -AssemblyName System.Drawing
-          $bmp = New-Object System.Drawing.Bitmap(64, 64)
-          $g = [System.Drawing.Graphics]::FromImage($bmp)
-          $g.Clear([System.Drawing.Color]::RoyalBlue)
-          $g.DrawString("ISF", (New-Object System.Drawing.Font("Arial",20)), [System.Drawing.Brushes]::White, 12, 20)
-          $icon = [System.Drawing.Icon]::FromHandle($bmp.GetHicon())
-          $fs = [System.IO.File]::Create("src-tauri/icons/icon.ico")
-          $icon.Save($fs)
-          $fs.Close()
-        shell: powershell
-
-      - name: Create tauri.conf.json
-        run: |
-          # 删除可能存在的空文件
-          if (Test-Path "src-tauri/tauri.conf.json") {
-            Remove-Item "src-tauri/tauri.conf.json" -Force
-          }
-          $json = @"
-          {
-            "identifier": "com.seafarer.workrest",
-            "productName": "seafarer-work-rest-log",
-            "version": "1.0.0",
-            "build": {
-              "frontendDist": "../dist",
-              "devUrl": "http://localhost:1420"
-            },
-            "app": {
-              "windows": [
-                {
-                  "title": "海员休息工作时间记录",
-                  "width": 1400,
-                  "height": 900,
-                  "resizable": true
-                }
-              ]
-            },
-            "bundle": {
-              "icon": ["icons/icon.ico"]
-            }
-          }
-          "@
-          # 使用 UTF8 编码，无 BOM
-          [System.IO.File]::WriteAllText("src-tauri/tauri.conf.json", $json, [System.Text.UTF8Encoding]::new($false))
-        shell: powershell
+          workspaces: './src-tauri -> target'
 
       - name: Install dependencies
-        run: |
-          Remove-Item -Force -Recurse -ErrorAction SilentlyContinue .\node_modules
-          Remove-Item -Force -Recurse -ErrorAction SilentlyContinue .\package-lock.json
-          npm install
+        run: npm ci || npm install
 
-      - name: Build frontend
-        run: npm run build
+      - name: Build Frontend & Tauri Standalone App
+        uses: tauri-apps/tauri-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'STCW 船员工时休息记录系统 v__VERSION__'
+          releaseBody: 'STCW 2010 / MLC 2006 船员工时休息记录系统 - 免安装绿色独立可执行文件 (.exe)'
+          releaseDraft: false
+          prerelease: false
+          args: --target x86_64-pc-windows-msvc
 
-      - name: Build Tauri app
-        run: npm run tauri build
-
-      - name: Upload EXE
+      - name: Upload Windows Executable Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: isf-exe
-          path: src-tauri/target/release/*.exe
-          if-no-files-found: error
+          name: SeafarerWorkRestLog-Windows-Exe
+          path: |
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/portable/*.exe
+            src-tauri/target/x86_64-pc-windows-msvc/release/*.exe

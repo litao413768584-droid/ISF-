@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { CrewMember, SlotStatus, WatchPattern, VesselInfo, WorkLogDay } from '../types';
 import { formatSlotTime, calculateDayWorkHours, calculateDayRestHours, analyzeDayRestStructure } from '../utils/complianceEngine';
 import {
@@ -461,20 +461,25 @@ export const SchedulePlanner: React.FC<SchedulePlannerProps> = ({
                   </div>
 
                   {/* 48-Slot Painter Bar Display */}
-                  <div className="grid grid-cols-48 gap-[1px] bg-slate-900 p-1.5 rounded-lg border border-slate-800">
-                    {wp.slots.map((st, idx) => {
-                      let bgClass = 'bg-slate-900';
-                      if (st === 'WORK') bgClass = 'bg-blue-600';
-                      if (st === 'OVERTIME') bgClass = 'bg-amber-500';
+                  <div className="overflow-x-auto custom-scrollbar pb-1">
+                    <div
+                      className="grid grid-cols-48 gap-[1px] bg-slate-900 p-1.5 rounded-lg border border-slate-800 min-w-[500px]"
+                      style={{ gridTemplateColumns: 'repeat(48, minmax(0, 1fr))' }}
+                    >
+                      {wp.slots.map((st, idx) => {
+                        let bgClass = 'bg-slate-900';
+                        if (st === 'WORK') bgClass = 'bg-blue-600';
+                        if (st === 'OVERTIME') bgClass = 'bg-amber-500';
 
-                      return (
-                        <div
-                          key={idx}
-                          className={`h-6 rounded-xs ${bgClass}`}
-                          title={`${formatSlotTime(idx)}: ${st}`}
-                        />
-                      );
-                    })}
+                        return (
+                          <div
+                            key={idx}
+                            className={`h-6 rounded-xs ${bgClass}`}
+                            title={`${formatSlotTime(idx)}: ${st}`}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
@@ -549,24 +554,29 @@ export const SchedulePlanner: React.FC<SchedulePlannerProps> = ({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-24 gap-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                      {patternFormSlots.map((st, idx) => {
-                        let bg = 'bg-slate-900 border border-slate-800 text-slate-500';
-                        if (st === 'WORK') bg = 'bg-blue-600 text-white font-bold';
-                        if (st === 'OVERTIME') bg = 'bg-amber-500 text-slate-950 font-bold';
+                    <div className="overflow-x-auto custom-scrollbar pb-1">
+                      <div
+                        className="grid grid-cols-24 gap-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800 min-w-[500px]"
+                        style={{ gridTemplateColumns: 'repeat(24, minmax(0, 1fr))' }}
+                      >
+                        {patternFormSlots.map((st, idx) => {
+                          let bg = 'bg-slate-900 border border-slate-800 text-slate-500';
+                          if (st === 'WORK') bg = 'bg-blue-600 text-white font-bold';
+                          if (st === 'OVERTIME') bg = 'bg-amber-500 text-slate-950 font-bold';
 
-                        return (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => toggleSlotStatus(idx)}
-                            className={`h-8 rounded text-[9px] transition cursor-pointer flex flex-col items-center justify-center ${bg}`}
-                            title={`Slot ${idx + 1}: ${formatSlotTime(idx)} - 点击切换`}
-                          >
-                            <span>{idx % 2 === 0 ? `${Math.floor(idx / 2)}h` : ''}</span>
-                          </button>
-                        );
-                      })}
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => toggleSlotStatus(idx)}
+                              className={`h-8 rounded text-[9px] transition cursor-pointer flex flex-col items-center justify-center ${bg}`}
+                              title={`Slot ${idx + 1}: ${formatSlotTime(idx)} - 点击切换`}
+                            >
+                              <span>{idx % 2 === 0 ? `${Math.floor(idx / 2)}h` : ''}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                     <div className="text-[11px] text-slate-400 mt-1">
                       当前计算: 工时 <strong className="text-blue-400">{calculateDayWorkHours(patternFormSlots).toFixed(1)}h</strong> |
@@ -775,20 +785,25 @@ export const SchedulePlanner: React.FC<SchedulePlannerProps> = ({
                 </h3>
 
                 {/* Visual 48 Slot Simulation Bar */}
-                <div className="grid grid-cols-48 gap-[1px] bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  {scenarioSlots.map((status, idx) => {
-                    let bgClass = 'bg-slate-900 border border-slate-800';
-                    if (status === 'WORK') bgClass = 'bg-blue-600';
-                    if (status === 'OVERTIME') bgClass = 'bg-amber-500';
+                <div className="overflow-x-auto custom-scrollbar pb-1">
+                  <div
+                    className="grid grid-cols-48 gap-[1px] bg-slate-900 p-2 rounded-lg border border-slate-800 min-w-[500px]"
+                    style={{ gridTemplateColumns: 'repeat(48, minmax(0, 1fr))' }}
+                  >
+                    {scenarioSlots.map((status, idx) => {
+                      let bgClass = 'bg-slate-900 border border-slate-800';
+                      if (status === 'WORK') bgClass = 'bg-blue-600';
+                      if (status === 'OVERTIME') bgClass = 'bg-amber-500';
 
-                    return (
-                      <div
-                        key={idx}
-                        className={`h-9 rounded-xs ${bgClass}`}
-                        title={`Slot ${idx + 1}: ${formatSlotTime(idx)} (${status})`}
-                      />
-                    );
-                  })}
+                      return (
+                        <div
+                          key={idx}
+                          className={`h-9 rounded-xs ${bgClass}`}
+                          title={`Slot ${idx + 1}: ${formatSlotTime(idx)} (${status})`}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 pt-2 text-xs">
@@ -868,4 +883,3 @@ export const SchedulePlanner: React.FC<SchedulePlannerProps> = ({
     </div>
   );
 };
-export default SchedulePlanner;

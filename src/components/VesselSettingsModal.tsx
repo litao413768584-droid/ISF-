@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { VesselInfo, RegulationMode } from '../types';
 import { Settings, Anchor, Check, Shield } from 'lucide-react';
 
@@ -152,4 +152,3 @@ export const VesselSettingsModal: React.FC<VesselSettingsModalProps> = ({
     </div>
   );
 };
-export default VesselSettingsModal;

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { CrewMember, WatchPattern, SlotStatus, BatchAssignParams } from '../types';
 import { formatSlotTime, getShiftedDateStr } from '../utils/complianceEngine';
 import { Users, Calendar, ShieldAlert, Anchor, Clock, Flame, Zap, Check, CheckSquare, Square, Layers, AlertTriangle } from 'lucide-react';
@@ -709,4 +709,3 @@ export const BatchAssignModal: React.FC<BatchAssignModalProps> = ({
     </div>
   );
 };
-export default BatchAssignModal;
