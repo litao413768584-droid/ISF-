@@ -38,6 +38,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Regenerate Tauri Icons
+        run: bun run tauri icon src/assets/images/maritime_app_icon_1786017702031.jpg
+
       - name: Build Frontend & Tauri Standalone App
         uses: tauri-apps/tauri-action@v0
         env:
