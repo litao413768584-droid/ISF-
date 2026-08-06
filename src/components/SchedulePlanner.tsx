@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { CrewMember, SlotStatus, WatchPattern, VesselInfo, WorkLogDay } from '../types';
 import { formatSlotTime, calculateDayWorkHours, calculateDayRestHours, analyzeDayRestStructure } from '../utils/complianceEngine';
 import {
@@ -868,3 +868,4 @@ export const SchedulePlanner: React.FC<SchedulePlannerProps> = ({
     </div>
   );
 };
+export default SchedulePlanner;

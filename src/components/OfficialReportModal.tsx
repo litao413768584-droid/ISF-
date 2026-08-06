@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { CrewMember, WorkLogDay, VesselInfo } from '../types';
 import { getMonthDates, calculateDayWorkHours, calculateDayRestHours, validateDayCompliance } from '../utils/complianceEngine';
 import { isStatutoryHoliday, getStatutoryHolidayInfo } from '../utils/holidays';
@@ -540,3 +540,4 @@ export const OfficialReportModal: React.FC<OfficialReportModalProps> = ({
     </div>
   );
 };
+export default OfficialReportModal;

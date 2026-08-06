@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { VesselStatusLog, VesselStatusType, CrewMember, SlotStatus } from '../types';
 import { Anchor, Ship, Building2, Layers, Plus, Trash2, X, Clock, MapPin, CheckCircle, Zap } from 'lucide-react';
 
@@ -325,3 +325,4 @@ export function VesselStatusModal({
     </div>
   );
 }
+export default VesselStatusModal;
